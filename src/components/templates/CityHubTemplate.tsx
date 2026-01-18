@@ -106,7 +106,7 @@ export default function CityHubTemplate({ city }: CityHubTemplateProps) {
 
         <Container className="position-relative" style={{ zIndex: 10 }}>
           <Row className="align-items-center min-vh-90 py-5">
-            <Col lg={7} className="pe-lg-5 order-lg-1 order-1">
+            <Col lg={7} className="pe-lg-5 order-lg-1 order-1 mb-5 mb-lg-0">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
