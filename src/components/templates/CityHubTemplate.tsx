@@ -106,7 +106,7 @@ export default function CityHubTemplate({ city }: CityHubTemplateProps) {
 
         <Container className="position-relative" style={{ zIndex: 10 }}>
           <Row className="align-items-center min-vh-90 py-5">
-            <Col lg={7} className="pe-lg-5 order-lg-1 order-2">
+            <Col lg={7} className="pe-lg-5 order-lg-1 order-1">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -187,7 +187,7 @@ export default function CityHubTemplate({ city }: CityHubTemplateProps) {
             </Col>
 
             {/* Quote form card - Modern glassmorphism design */}
-            <Col lg={5} className="order-lg-2 order-1 mb-4 mb-lg-0">
+            <Col lg={5} className="order-lg-2 order-2 mb-4 mb-lg-0">
               <div className="quote-form-modern">
                 <h3 className="h4 fw-bold mb-3 text-white">Request a Free Quote</h3>
                 <p className="text-white-50 mb-4 small">Get a custom strategy for your {city.name} business</p>
