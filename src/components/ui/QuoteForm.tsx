@@ -175,7 +175,7 @@ ${formData.message}` : ''}
       const serviceName = services.find(s => s.slug === formData.serviceInterest)?.name || formData.serviceInterest;
 
       // Send to Formspree
-      const response = await fetch('https://formspree.io/f/xdaaejzb', {
+      const response = await fetch('https://formspree.io/f/mykkeald', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
