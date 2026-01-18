@@ -174,7 +174,7 @@ ${formData.message}` : ''}
       // Format email data for Formspree
       const serviceName = services.find(s => s.slug === formData.serviceInterest)?.name || formData.serviceInterest;
 
-      // Send to Formspree (test email: jamiesinc618@gmail.com)
+      // Send to Formspree
       const response = await fetch('https://formspree.io/f/xdaaejzb', {
         method: 'POST',
         headers: {
@@ -188,7 +188,6 @@ ${formData.message}` : ''}
           service: serviceName,
           message: formData.message,
           _replyto: formData.email,
-          _to: 'jamiesinc618@gmail.com',
           _subject: `🚀 NEW LEAD - ${formData.fullName}`,
         }),
       });
