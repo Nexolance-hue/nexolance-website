@@ -171,32 +171,35 @@ ${formData.message}` : ''}
     setIsSubmittingEmail(true);
 
     try {
-      // Format email message
+      // Format email data for Formspree
       const serviceName = services.find(s => s.slug === formData.serviceInterest)?.name || formData.serviceInterest;
 
-      const emailSubject = `New Lead - ${formData.fullName}`;
-      const emailBody = `NEW LEAD - Nexolance Agency
+      // Send to Formspree
+      const response = await fetch('https://formspree.io/f/xdaaejzb', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.companyName,
+          service: serviceName,
+          message: formData.message,
+          _subject: `🚀 NEW LEAD - ${formData.fullName}`,
+        }),
+      });
 
-CONTACT INFO
-Name: ${formData.fullName}
-Email: ${formData.email}
-Phone: ${formData.phone}${formData.companyName ? `\nCompany: ${formData.companyName}` : ''}
-
-SERVICE INTEREST
-${serviceName}${formData.message ? `
-
-PROJECT DETAILS
-${formData.message}` : ''}`;
-
-      // Open email client
-      const mailtoUrl = `mailto:info@nexolance.agency?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-      window.location.href = mailtoUrl;
+      if (!response.ok) {
+        throw new Error('Failed to send email');
+      }
 
       // Success
       setSubmitStatus({
         type: 'success',
         message:
-          'Thank you! Your email client has been opened. Please send the email to complete your request.',
+          'Thank you! Your request has been sent via email. We\'ll contact you within 24 hours.',
       });
 
       // Reset form
@@ -212,7 +215,7 @@ ${formData.message}` : ''}`;
       setSubmitStatus({
         type: 'error',
         message:
-          'Sorry, there was an error. Please email us directly at info@nexolance.agency',
+          'Sorry, there was an error sending the email. Please try WhatsApp or call us at (816) 367-9231.',
       });
       console.error('Email submission error:', error);
     } finally {
