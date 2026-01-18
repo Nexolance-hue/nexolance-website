@@ -103,17 +103,52 @@ export default function QuoteForm() {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      console.log('Form submitted:', formData);
+      // Send email via API
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-      // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      if (!response.ok) {
+        throw new Error('Failed to send email');
+      }
+
+      // Format WhatsApp message
+      const serviceName = services.find(s => s.slug === formData.serviceInterest)?.name || formData.serviceInterest;
+      const currentDateTime = new Date().toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+        dateStyle: 'full',
+        timeStyle: 'short'
+      });
+
+      const whatsappMessage = `🚀 NEW LEAD - Nexolance Agency
+
+👤 CONTACT INFO
+Name: ${formData.fullName}
+Email: ${formData.email}
+Phone: ${formData.phone}${formData.companyName ? `\nCompany: ${formData.companyName}` : ''}
+
+💼 SERVICE INTEREST
+${serviceName}${formData.message ? `
+
+📝 PROJECT DETAILS
+${formData.message}` : ''}
+
+⏰ Submitted: ${currentDateTime}`;
+
+      // Open WhatsApp in new tab
+      const whatsappNumber = '18163679231';
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+      window.open(whatsappUrl, '_blank');
 
       // Success
       setSubmitStatus({
         type: 'success',
         message:
-          'Thank you! Your quote request has been received. We\'ll contact you within 24 hours.',
+          'Thank you! Your request has been sent via email and WhatsApp. We\'ll contact you within 24 hours.',
       });
 
       // Reset form
@@ -129,7 +164,7 @@ export default function QuoteForm() {
       setSubmitStatus({
         type: 'error',
         message:
-          'Sorry, there was an error submitting your request. Please try again or call us at (913) 555-0100.',
+          'Sorry, there was an error submitting your request. Please try again or call us at (816) 367-9231.',
       });
       console.error('Form submission error:', error);
     } finally {
@@ -271,10 +306,10 @@ export default function QuoteForm() {
                 aria-hidden="true"
                 className="me-2"
               />
-              Submitting...
+              Sending to WhatsApp...
             </>
           ) : (
-            'Get Your Free Quote'
+            'Get Free Assessment'
           )}
         </Button>
 
