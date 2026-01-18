@@ -103,17 +103,18 @@ export default function QuoteForm() {
     setIsSubmitting(true);
 
     try {
-      // Send email via API
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send email');
+      // Try to send email via API (optional - may not work with static export)
+      try {
+        await fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+      } catch (emailError) {
+        // Email failed but that's okay - WhatsApp will still work
+        console.log('Email API not available (static export):', emailError);
       }
 
       // Format WhatsApp message
@@ -148,7 +149,7 @@ ${formData.message}` : ''}
       setSubmitStatus({
         type: 'success',
         message:
-          'Thank you! Your request has been sent via email and WhatsApp. We\'ll contact you within 24 hours.',
+          'Thank you! Your request has been sent via WhatsApp. We\'ll contact you within 24 hours.',
       });
 
       // Reset form
