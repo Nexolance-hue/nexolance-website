@@ -24,27 +24,35 @@ export default function SEOWidget() {
           document.head.appendChild(linkElement);
         }
 
-        // Check if script is already loaded
+        // Always try to load the script (it won't reload if already there)
+        scriptElement = document.createElement('script');
+        scriptElement.src = 'https://api.seoaudit.software/files/widget/v3.1/js/api.min.js';
+        scriptElement.async = true;
+
+        // Check if already loaded first
         const existingScript = document.querySelector('script[src*="api.seoaudit.software"]');
-        if (!existingScript) {
-          // Load JS
-          scriptElement = document.createElement('script');
-          scriptElement.src = 'https://api.seoaudit.software/files/widget/v3.1/js/api.min.js';
-          scriptElement.async = false; // Load synchronously for reliability
 
-          scriptElement.onload = () => {
-            console.log('SEO Audit Widget script loaded');
+        scriptElement.onload = () => {
+          console.log('SEO Audit Widget script loaded successfully');
+          console.log('Checking window object for SAS_widget...');
+          console.log('typeof window.SAS_widget:', typeof (window as any).SAS_widget);
+          console.log('window object keys (filtered):', Object.keys(window).filter(k => k.includes('SAS') || k.includes('sas')));
+          setTimeout(() => {
+            console.log('After delay - typeof window.SAS_widget:', typeof (window as any).SAS_widget);
             initializeWidget();
-          };
+          }, 500);
+        };
 
-          scriptElement.onerror = () => {
-            console.error('Failed to load SEO Audit Widget script');
-            setError('Failed to load widget. Please refresh the page.');
-          };
+        scriptElement.onerror = (e) => {
+          console.error('Failed to load SEO Audit Widget script:', e);
+          setError('Failed to load widget. Please check your internet connection and refresh the page.');
+        };
 
+        if (!existingScript) {
+          console.log('Loading widget script...');
           document.body.appendChild(scriptElement);
         } else {
-          // Script already exists, try to initialize
+          console.log('Script already exists, initializing...');
           initializeWidget();
         }
       } catch (err) {
@@ -54,24 +62,45 @@ export default function SEOWidget() {
     };
 
     const initializeWidget = () => {
-      // Try to initialize multiple times with delays
-      const attempts = [100, 500, 1000, 2000];
+      console.log('Attempting to initialize widget...');
+      console.log('Window.SAS_widget exists?', typeof (window as any).SAS_widget !== 'undefined');
 
+      if (typeof window !== 'undefined' && (window as any).SAS_widget) {
+        try {
+          console.log('Initializing SAS_widget...');
+          new (window as any).SAS_widget('#sas-widget-8cbcaf530edba0a1aa7f31878f8043b8');
+          console.log('Widget initialized successfully!');
+          setIsLoaded(true);
+          return true;
+        } catch (e) {
+          console.error('Widget initialization error:', e);
+          setError('Widget initialization failed. Please refresh the page.');
+          return false;
+        }
+      }
+
+      // If not available, try again with delays
+      const attempts = [500, 1500, 3000, 5000];
       attempts.forEach((delay) => {
         setTimeout(() => {
-          if (typeof window !== 'undefined' && (window as any).SAS_widget) {
+          if (typeof window !== 'undefined' && (window as any).SAS_widget && !isLoaded) {
             try {
               new (window as any).SAS_widget('#sas-widget-8cbcaf530edba0a1aa7f31878f8043b8');
-              console.log('Widget initialized successfully');
+              console.log('Widget initialized successfully after', delay, 'ms delay');
               setIsLoaded(true);
             } catch (e) {
-              console.log('Widget initialization attempt:', e);
+              console.log('Widget initialization attempt failed at', delay, 'ms:', e);
             }
-          } else {
-            console.log('SAS_widget not available yet, attempt at:', delay, 'ms');
+          } else if (!isLoaded) {
+            console.log('SAS_widget still not available at:', delay, 'ms');
+            if (delay === 5000) {
+              setError('Widget failed to load. Please refresh the page or check your internet connection.');
+            }
           }
         }, delay);
       });
+
+      return false;
     };
 
     loadWidget();
