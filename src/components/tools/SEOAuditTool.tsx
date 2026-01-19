@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Button, Spinner, Alert } from 'react-bootstrap';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, XCircle, AlertTriangle, TrendingUp, Search, Award, Mail, Phone, FileText, Zap, Target, BarChart3, Users, Quote, Star, Shield, Clock, BookOpen, MapPin, MessageSquare, Download, Share2 } from 'lucide-react';
@@ -41,6 +41,31 @@ export default function SEOAuditTool() {
 
   // Cache results to prevent duplicate API calls
   const [cachedResults, setCachedResults] = useState<Record<string, AuditResults>>({});
+
+  // Initialize SEO Audit Widget
+  useEffect(() => {
+    const initWidget = () => {
+      if (typeof window !== 'undefined' && (window as any).SAS_widget) {
+        try {
+          new (window as any).SAS_widget('#sas-widget-8cbcaf530edba0a1aa7f31878f8043b8');
+          console.log('SEO Audit Widget initialized successfully');
+        } catch (e) {
+          console.log('Widget already initialized or error:', e);
+        }
+      } else {
+        console.log('SAS_widget not yet loaded');
+      }
+    };
+
+    // Try to initialize after delays to ensure script is loaded
+    const timers = [
+      setTimeout(initWidget, 500),
+      setTimeout(initWidget, 1500),
+      setTimeout(initWidget, 3000)
+    ];
+
+    return () => timers.forEach(timer => clearTimeout(timer));
+  }, []);
 
   // Lead capture form state
   const [showLeadForm, setShowLeadForm] = useState(false);
@@ -723,87 +748,22 @@ ${topIssues}
                     </Alert>
                   )}
 
-                  {/* Audit form */}
-                  <Form onSubmit={handleAnalyze} className="mb-4">
-                    <div className="d-flex flex-column flex-md-row gap-3 justify-content-center">
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter your website URL (e.g., example.com)"
-                        value={url}
-                        onChange={(e) => setUrl(e.target.value)}
-                        disabled={isAnalyzing}
-                        className="text-center"
-                        style={{
-                          maxWidth: '500px',
-                          height: '60px',
-                          fontSize: '1.1rem',
-                          background: 'rgba(255,255,255,0.05)',
-                          border: '1px solid rgba(255,255,255,0.1)',
-                          color: 'white'
+                  {/* SEO Audit Software Widget */}
+                  <div className="mb-4">
+                    <div className="bg-white rounded-4 p-4 shadow-lg" style={{ maxWidth: '800px', margin: '0 auto' }}>
+                      <div
+                        className="sas-widget"
+                        id="sas-widget-8cbcaf530edba0a1aa7f31878f8043b8"
+                        data-url="https://api.seoaudit.software"
+                        data-key="8cbcaf530edba0a1aa7f31878f8043b8"
+                      ></div>
+                      <script
+                        dangerouslySetInnerHTML={{
+                          __html: `if(typeof SAS_widget != 'undefined'){ new SAS_widget('#sas-widget-8cbcaf530edba0a1aa7f31878f8043b8');}`
                         }}
                       />
-                      <Button
-                        type="submit"
-                        disabled={isAnalyzing}
-                        className="btn-gradient fw-semibold px-5"
-                        style={{ height: '60px', minWidth: '200px', color: '#ffffff', fontSize: '1.1rem' }}
-                      >
-                        {isAnalyzing ? (
-                          <>
-                            <Spinner animation="border" size="sm" className="me-2" />
-                            Analyzing...
-                          </>
-                        ) : (
-                          <>
-                            <Search className="me-2" size={20} />
-                            Analyze My Website
-                          </>
-                        )}
-                      </Button>
                     </div>
-                  </Form>
-
-                  {/* Analysis progress */}
-                  {isAnalyzing && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="mb-4"
-                      style={{ maxWidth: '600px', margin: '0 auto' }}
-                    >
-                      {analysisStep && (
-                        <p className="mb-2 text-center fw-semibold" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>
-                          {analysisStep}
-                        </p>
-                      )}
-                      <div
-                        className="progress"
-                        style={{
-                          height: '30px',
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          borderRadius: '15px',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <div
-                          className="progress-bar progress-bar-striped progress-bar-animated"
-                          role="progressbar"
-                          style={{
-                            width: `${progress}%`,
-                            background: 'linear-gradient(90deg, #10b981 0%, #3b82f6 100%)',
-                            transition: 'width 0.3s ease',
-                          }}
-                          aria-valuenow={progress}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                        >
-                          <span className="fw-bold px-2" style={{ fontSize: '0.9rem' }}>
-                            {Math.round(progress)}%
-                          </span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
+                  </div>
 
                   {/* Trust indicators */}
                   <div className="d-flex flex-wrap gap-4 justify-content-center small mb-3" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
