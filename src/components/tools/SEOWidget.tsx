@@ -13,7 +13,8 @@ export default function SEOWidget({ url, setUrl, onSubmit }: SEOWidgetProps) {
   return (
     <div className="bg-white rounded-4 p-4 shadow-lg" style={{ maxWidth: '700px', margin: '0 auto' }}>
       <Form onSubmit={onSubmit}>
-        <InputGroup size="lg">
+        {/* Input Group - Desktop */}
+        <InputGroup size="lg" className="d-none d-md-flex">
           <InputGroup.Text className="bg-white border-end-0 ps-3">
             <Search size={20} className="text-success" />
           </InputGroup.Text>
@@ -43,6 +44,39 @@ export default function SEOWidget({ url, setUrl, onSubmit }: SEOWidgetProps) {
             Analyze My Website
           </Button>
         </InputGroup>
+
+        {/* Stacked Layout - Mobile */}
+        <div className="d-md-none">
+          <InputGroup size="lg" className="mb-3">
+            <InputGroup.Text className="bg-white border-end-0 ps-3">
+              <Search size={20} className="text-success" />
+            </InputGroup.Text>
+            <Form.Control
+              type="text"
+              placeholder="Enter your website URL"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              className="border-start-0"
+              required
+              style={{
+                fontSize: '1rem',
+                padding: '0.75rem 1rem',
+              }}
+            />
+          </InputGroup>
+          <Button
+            type="submit"
+            variant="success"
+            size="lg"
+            className="w-100 fw-semibold"
+            style={{
+              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+              border: 'none',
+            }}
+          >
+            Analyze My Website
+          </Button>
+        </div>
       </Form>
     </div>
   );
