@@ -142,11 +142,23 @@ export default function SEOAuditTool() {
 
       // Use APIErrorHandler with automatic retry logic
       setAnalysisStep('Audit in progress - analyzing your website...');
+      setProgress(40);
+
+      // Smooth progress animation during API call
+      const progressInterval = setInterval(() => {
+        setProgress(prev => {
+          if (prev < 65) return prev + 0.5;
+          return prev;
+        });
+      }, 100);
+
       const data = await APIErrorHandler.fetchWithRetry<GooglePageSpeedResponse>(apiUrl, {}, {
         maxRetries: 4,
         baseDelay: 2500,
         retryableStatuses: [429, 500, 502, 503, 504]
       });
+
+      clearInterval(progressInterval);
 
       // Step 3: Scanning technical issues
       setAnalysisStep('Scanning technical issues...');
@@ -730,6 +742,45 @@ ${topIssues}
                   <div className="mb-4">
                     <SEOWidget url={url} setUrl={setUrl} onSubmit={handleAnalyze} />
                   </div>
+
+                  {/* Progress Bar */}
+                  {isAnalyzing && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mb-4"
+                    >
+                      <div className="bg-white bg-opacity-10 rounded-4 p-4">
+                        <div className="d-flex align-items-center justify-content-between mb-3">
+                          <h5 className="text-white mb-0 fw-semibold">
+                            {analysisStep || 'Analyzing your website...'}
+                          </h5>
+                          <span className="text-white fw-bold">{Math.round(progress)}%</span>
+                        </div>
+                        <div className="progress" style={{
+                          height: '30px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '15px',
+                          overflow: 'hidden',
+                        }}>
+                          <div
+                            className="progress-bar progress-bar-striped progress-bar-animated"
+                            role="progressbar"
+                            style={{
+                              width: `${progress}%`,
+                              background: 'linear-gradient(90deg, #10b981 0%, #3b82f6 100%)',
+                              transition: 'width 0.3s ease',
+                            }}
+                          >
+                            <span className="fw-bold px-2">{Math.round(progress)}%</span>
+                          </div>
+                        </div>
+                        <p className="text-white-50 small mb-0 mt-2">
+                          ⏱️ This usually takes 5-15 seconds
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
 
                   {/* Trust indicators */}
                   <div className="d-flex flex-wrap gap-4 justify-content-center small mb-3" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
