@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Container, Row, Col, Form, Button, Spinner, Alert } from 'react-bootstrap';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, XCircle, AlertTriangle, TrendingUp, Search, Award, Mail, Phone, FileText, Zap, Target, BarChart3, Users, Quote, Star, Shield, Clock, BookOpen, MapPin, MessageSquare, Download, Share2 } from 'lucide-react';
@@ -42,31 +42,6 @@ export default function SEOAuditTool() {
 
   // Cache results to prevent duplicate API calls
   const [cachedResults, setCachedResults] = useState<Record<string, AuditResults>>({});
-
-  // Initialize SEO Audit Widget
-  useEffect(() => {
-    const initWidget = () => {
-      if (typeof window !== 'undefined' && (window as any).SAS_widget) {
-        try {
-          new (window as any).SAS_widget('#sas-widget-8cbcaf530edba0a1aa7f31878f8043b8');
-          console.log('SEO Audit Widget initialized successfully');
-        } catch (e) {
-          console.log('Widget already initialized or error:', e);
-        }
-      } else {
-        console.log('SAS_widget not yet loaded');
-      }
-    };
-
-    // Try to initialize after delays to ensure script is loaded
-    const timers = [
-      setTimeout(initWidget, 500),
-      setTimeout(initWidget, 1500),
-      setTimeout(initWidget, 3000)
-    ];
-
-    return () => timers.forEach(timer => clearTimeout(timer));
-  }, []);
 
   // Lead capture form state
   const [showLeadForm, setShowLeadForm] = useState(false);
@@ -751,9 +726,7 @@ ${topIssues}
 
                   {/* SEO Audit Software Widget */}
                   <div className="mb-4">
-                    <div className="bg-white rounded-4 p-4 shadow-lg" style={{ maxWidth: '800px', margin: '0 auto' }}>
-                      <SEOWidget />
-                    </div>
+                    <SEOWidget url={url} setUrl={setUrl} onSubmit={handleAnalyze} />
                   </div>
 
                   {/* Trust indicators */}
