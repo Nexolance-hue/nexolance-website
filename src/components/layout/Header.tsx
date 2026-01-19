@@ -60,6 +60,26 @@ export default function Header() {
           />
         </Navbar.Brand>
 
+        {/* Mobile-only Free SEO Audit button */}
+        <button
+          onClick={() => navigate('/tools/seo-audit')}
+          className="btn btn-success btn-sm d-lg-none fw-semibold text-white position-relative"
+          style={{
+            padding: '0.4rem 0.8rem',
+            borderRadius: '8px',
+            fontSize: '0.85rem',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Free Audit
+          <span
+            className="badge bg-white text-success position-absolute top-0 start-100 translate-middle"
+            style={{ fontSize: '0.5rem', padding: '0.15rem 0.3rem' }}
+          >
+            FREE
+          </span>
+        </button>
+
         <Navbar.Toggle aria-controls="main-navbar-nav" />
 
         <Navbar.Collapse id="main-navbar-nav">
@@ -89,6 +109,18 @@ export default function Header() {
                 </NavDropdown.Item>
               ))}
             </NavDropdown>
+
+            <Nav.Link onClick={() => navigate('/tools/seo-audit')}>
+              <span className="position-relative">
+                Free SEO Audit
+                <span
+                  className="badge bg-success position-absolute top-0 start-100 translate-middle"
+                  style={{ fontSize: '0.6rem', padding: '0.2rem 0.4rem' }}
+                >
+                  FREE
+                </span>
+              </span>
+            </Nav.Link>
 
             <Nav.Link onClick={() => navigate('/about')}>About</Nav.Link>
 

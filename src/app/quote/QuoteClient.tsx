@@ -68,10 +68,10 @@ export default function QuoteClient() {
                   lineHeight: 1.2,
                   letterSpacing: '-0.01em'
                 }}>
-                  Get Your Free <span className="text-gradient">Marketing Quote</span>
+                  Get Started with <span className="text-gradient">Nexolance</span>
                 </h1>
                 <p className="lead text-white-50 mb-4" style={{ fontSize: '1.2rem' }}>
-                  Tell us about your business and goals. Receive a customized digital marketing strategy and transparent pricing within 24 hours.
+                  Request a custom quote, schedule a free consultation, or get your SEO audit - choose what works best for you. Receive a customized strategy and transparent pricing within 24 hours.
                 </p>
 
                 {/* Key Points */}

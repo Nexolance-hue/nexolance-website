@@ -127,6 +127,19 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
+
+            <h5 className="text-white mb-3 mt-4">Free Resources</h5>
+            <ul className="list-unstyled">
+              <li className="mb-2">
+                <Link
+                  href="/tools/seo-audit"
+                  className="text-light opacity-75 text-decoration-none hover-link"
+                >
+                  <span className="badge bg-success me-2" style={{ fontSize: '0.65rem' }}>FREE</span>
+                  SEO Audit Tool
+                </Link>
+              </li>
+            </ul>
           </Col>
         </Row>
 
