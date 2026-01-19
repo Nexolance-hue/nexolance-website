@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { Container, Row, Col, Form, Button, Spinner, Alert } from 'react-bootstrap';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, XCircle, AlertTriangle, TrendingUp, Search, Award, Mail, Phone, FileText, Zap, Target, BarChart3, Users, Quote, Star, Shield, Clock, BookOpen, MapPin, MessageSquare } from 'lucide-react';
+import { CheckCircle, XCircle, AlertTriangle, TrendingUp, Search, Award, Mail, Phone, FileText, Zap, Target, BarChart3, Users, Quote, Star, Shield, Clock, BookOpen, MapPin, MessageSquare, Download, Share2 } from 'lucide-react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface AuditScores {
   seo: number;
@@ -277,6 +279,162 @@ export default function SEOAuditTool() {
     if (score <= 50) return '🔥 HOT LEAD';
     if (score <= 70) return '🟡 WARM LEAD';
     return '🟢 COLD LEAD';
+  };
+
+  const generatePDF = () => {
+    if (!results) return;
+
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    // Header with branding
+    doc.setFillColor(16, 185, 129);
+    doc.rect(0, 0, pageWidth, 35, 'F');
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
+    doc.text('SEO Audit Report', pageWidth / 2, 15, { align: 'center' });
+
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Powered by Nexolance', pageWidth / 2, 25, { align: 'center' });
+
+    // Website URL
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Website:', 14, 50);
+    doc.setFont('helvetica', 'normal');
+    doc.text(results.url, 40, 50);
+
+    // Date
+    doc.setFontSize(10);
+    doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 14, 57);
+
+    // Overall Score Circle
+    const centerX = pageWidth / 2;
+    const circleY = 75;
+    const scoreColor = results.scores.overall >= 80 ? [16, 185, 129] :
+                      results.scores.overall >= 50 ? [245, 158, 11] : [239, 68, 68];
+
+    doc.setDrawColor(scoreColor[0], scoreColor[1], scoreColor[2]);
+    doc.setLineWidth(3);
+    doc.circle(centerX, circleY, 20, 'S');
+
+    doc.setTextColor(scoreColor[0], scoreColor[1], scoreColor[2]);
+    doc.setFontSize(28);
+    doc.setFont('helvetica', 'bold');
+    doc.text(results.scores.overall.toString(), centerX, circleY + 3, { align: 'center' });
+
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text('Overall Score', centerX, circleY + 12, { align: 'center' });
+
+    // Category Scores Table
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Category Scores', 14, 110);
+
+    autoTable(doc, {
+      startY: 115,
+      head: [['Category', 'Score', 'Status']],
+      body: [
+        ['SEO', results.scores.seo, results.scores.seo >= 80 ? 'Good' : results.scores.seo >= 50 ? 'Fair' : 'Poor'],
+        ['Performance', results.scores.performance, results.scores.performance >= 80 ? 'Good' : results.scores.performance >= 50 ? 'Fair' : 'Poor'],
+        ['Accessibility', results.scores.accessibility, results.scores.accessibility >= 80 ? 'Good' : results.scores.accessibility >= 50 ? 'Fair' : 'Poor'],
+        ['Best Practices', results.scores.bestPractices, results.scores.bestPractices >= 80 ? 'Good' : results.scores.bestPractices >= 50 ? 'Fair' : 'Poor'],
+      ],
+      theme: 'grid',
+      headStyles: { fillColor: [16, 185, 129], textColor: [255, 255, 255] },
+      styles: { fontSize: 11 },
+    });
+
+    // Critical Issues
+    const criticalY = (doc as any).lastAutoTable.finalY + 15;
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Critical Issues (${results.issues.critical.length})`, 14, criticalY);
+
+    if (results.issues.critical.length > 0) {
+      autoTable(doc, {
+        startY: criticalY + 5,
+        head: [['Issue', 'Description']],
+        body: results.issues.critical.slice(0, 5).map(issue => [issue.title, issue.description || 'No description']),
+        theme: 'grid',
+        headStyles: { fillColor: [239, 68, 68], textColor: [255, 255, 255] },
+        styles: { fontSize: 9 },
+        columnStyles: {
+          0: { cellWidth: 60 },
+          1: { cellWidth: 'auto' }
+        }
+      });
+    }
+
+    // Warnings
+    const warningsY = (doc as any).lastAutoTable.finalY + 15;
+    if (warningsY < pageHeight - 40) {
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Warnings (${results.issues.warnings.length})`, 14, warningsY);
+
+      if (results.issues.warnings.length > 0) {
+        autoTable(doc, {
+          startY: warningsY + 5,
+          head: [['Issue', 'Description']],
+          body: results.issues.warnings.slice(0, 5).map(issue => [issue.title, issue.description || 'No description']),
+          theme: 'grid',
+          headStyles: { fillColor: [245, 158, 11], textColor: [255, 255, 255] },
+          styles: { fontSize: 9 },
+          columnStyles: {
+            0: { cellWidth: 60 },
+            1: { cellWidth: 'auto' }
+          }
+        });
+      }
+    }
+
+    // Footer
+    const footerY = pageHeight - 20;
+    doc.setFillColor(240, 240, 240);
+    doc.rect(0, footerY - 5, pageWidth, 25, 'F');
+
+    doc.setTextColor(100, 100, 100);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Need help improving your SEO?', pageWidth / 2, footerY + 2, { align: 'center' });
+    doc.setFont('helvetica', 'bold');
+    doc.text('Contact Nexolance: (816) 367-9231 | nexolance.agency', pageWidth / 2, footerY + 8, { align: 'center' });
+
+    // Save PDF
+    const fileName = `SEO-Audit-${results.url.replace(/https?:\/\//, '').replace(/[^a-z0-9]/gi, '-')}-${new Date().toISOString().split('T')[0]}.pdf`;
+    doc.save(fileName);
+  };
+
+  const handleShare = async () => {
+    if (!results) return;
+
+    const shareData = {
+      title: `SEO Audit Results for ${results.url}`,
+      text: `Check out my SEO audit score: ${results.scores.overall}/100! Get your free audit at Nexolance.`,
+      url: window.location.href
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback: Copy to clipboard
+        await navigator.clipboard.writeText(
+          `SEO Audit Results for ${results.url}\n\nOverall Score: ${results.scores.overall}/100\n• SEO: ${results.scores.seo}/100\n• Performance: ${results.scores.performance}/100\n• Accessibility: ${results.scores.accessibility}/100\n• Best Practices: ${results.scores.bestPractices}/100\n\nGet your free audit at: https://nexolance.agency/tools/seo-audit`
+        );
+        alert('Results copied to clipboard!');
+      }
+    } catch (err) {
+      console.error('Error sharing:', err);
+    }
   };
 
   const handleLeadFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -682,17 +840,48 @@ ${topIssues}
               <div className="text-center mb-5">
                 <h2 className="fw-bold mb-3 text-white">SEO Audit Results for</h2>
                 <p className="lead text-gradient mb-0">{results.url}</p>
-                <Button
-                  variant="link"
-                  className="small mt-2"
-                  style={{ color: 'rgba(255, 255, 255, 0.85)' }}
-                  onClick={() => {
-                    setResults(null);
-                    setUrl('');
-                  }}
-                >
-                  ← Analyze another website
-                </Button>
+
+                {/* Action buttons */}
+                <div className="d-flex flex-wrap gap-3 justify-content-center mt-4">
+                  <Button
+                    variant="success"
+                    className="fw-semibold px-4 py-2"
+                    onClick={generatePDF}
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      border: 'none',
+                      color: '#ffffff'
+                    }}
+                  >
+                    <Download size={18} className="me-2" />
+                    Download PDF Report
+                  </Button>
+
+                  <Button
+                    variant="outline-light"
+                    className="fw-semibold px-4 py-2"
+                    onClick={handleShare}
+                    style={{
+                      borderColor: 'rgba(255, 255, 255, 0.3)',
+                      color: '#ffffff'
+                    }}
+                  >
+                    <Share2 size={18} className="me-2" />
+                    Share Results
+                  </Button>
+
+                  <Button
+                    variant="link"
+                    className="small"
+                    style={{ color: 'rgba(255, 255, 255, 0.85)' }}
+                    onClick={() => {
+                      setResults(null);
+                      setUrl('');
+                    }}
+                  >
+                    ← Analyze another website
+                  </Button>
+                </div>
               </div>
 
               {/* Overall score */}
