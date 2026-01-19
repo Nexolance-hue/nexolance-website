@@ -7,6 +7,10 @@ import { CheckCircle, XCircle, AlertTriangle, TrendingUp, Search, Award, Mail, P
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import SEOWidget from './SEOWidget';
+import { APIErrorHandler } from '@/lib/errors/apiErrorHandler';
+import { ErrorFactory } from '@/lib/errors/errorFactory';
+import { errorLogger } from '@/lib/errors/errorLogger';
+import { AppError } from '@/lib/errors/types';
 
 interface AuditScores {
   seo: number;
@@ -29,6 +33,24 @@ interface AuditResults {
     critical: AuditIssue[];
     warnings: AuditIssue[];
     passed: AuditIssue[];
+  };
+}
+
+interface GooglePageSpeedResponse {
+  lighthouseResult: {
+    categories: {
+      seo: { score: number };
+      performance: { score: number };
+      accessibility: { score: number };
+      'best-practices': { score: number };
+    };
+    audits: {
+      [key: string]: {
+        title: string;
+        description?: string;
+        score: number | null;
+      };
+    };
   };
 }
 
@@ -113,57 +135,22 @@ export default function SEOAuditTool() {
       setAnalysisStep('Checking mobile performance...');
       setProgress(30);
 
-      // Call Google PageSpeed Insights API with retry logic
+      // Call Google PageSpeed Insights API with enhanced error handling
       const categories = ['performance', 'accessibility', 'best-practices', 'seo'];
       const googleApiKey = process.env.NEXT_PUBLIC_GOOGLE_PAGESPEED_API_KEY;
       const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(formattedUrl)}&category=${categories.join('&category=')}&strategy=mobile${googleApiKey ? `&key=${googleApiKey}` : ''}`;
 
-      let response;
-      let retryCount = 0;
-      const maxRetries = 3;
-
-      while (retryCount <= maxRetries) {
-        response = await fetch(apiUrl);
-
-        if (response.ok) {
-          break;
-        }
-
-        if (response.status === 429) {
-          if (retryCount < maxRetries) {
-            // Exponential backoff: 3s, 9s, 27s
-            const waitTime = Math.pow(3, retryCount + 1) * 1000;
-            setAnalysisStep('Audit in progress - analyzing your website...');
-            setProgress(40 + (retryCount * 15));
-
-            // Smooth progress bar animation during wait
-            const progressInterval = setInterval(() => {
-              setProgress(prev => Math.min(prev + 0.5, 85));
-            }, waitTime / 60);
-
-            await new Promise(resolve => setTimeout(resolve, waitTime));
-            clearInterval(progressInterval);
-            retryCount++;
-          } else {
-            throw new Error('RATE_LIMIT');
-          }
-        } else if (response.status === 404) {
-          throw new Error('We couldn\'t access this website. Make sure it\'s publicly available and the URL is correct.');
-        } else if (response.status === 500) {
-          throw new Error('Google PageSpeed service is temporarily unavailable. Please try again in a moment.');
-        } else {
-          throw new Error('Failed to analyze website. Please check the URL and try again.');
-        }
-      }
-
-      if (!response || !response.ok) {
-        throw new Error('Unable to complete analysis. Please try again later.');
-      }
+      // Use APIErrorHandler with automatic retry logic
+      setAnalysisStep('Audit in progress - analyzing your website...');
+      const data = await APIErrorHandler.fetchWithRetry<GooglePageSpeedResponse>(apiUrl, {}, {
+        maxRetries: 4,
+        baseDelay: 2500,
+        retryableStatuses: [429, 500, 502, 503, 504]
+      });
 
       // Step 3: Scanning technical issues
       setAnalysisStep('Scanning technical issues...');
       setProgress(70);
-      const data = await response.json();
 
       // Step 4: Generating report
       setAnalysisStep('Generating report...');
@@ -245,7 +232,6 @@ export default function SEOAuditTool() {
       };
 
       // Cache the results
-      const cacheKey = formattedUrl.toLowerCase();
       setCachedResults(prev => ({
         ...prev,
         [cacheKey]: auditResults
@@ -255,13 +241,29 @@ export default function SEOAuditTool() {
       setResults(auditResults);
 
     } catch (err: any) {
-      console.error('Audit error:', err);
+      let appError: AppError;
 
-      // Special handling for rate limit errors
-      if (err.message === 'RATE_LIMIT') {
-        setError('RATE_LIMIT');
+      // Convert to AppError if not already
+      if (err.statusCode) {
+        appError = err;
       } else {
-        setError(err.message || 'An error occurred while analyzing the website. Please try again.');
+        appError = ErrorFactory.createError(
+          err.status || 0,
+          err.message || 'Network error',
+          { url: formattedUrl }
+        );
+      }
+
+      // Log the error
+      errorLogger.log(appError, { component: 'SEOAuditTool', url: formattedUrl });
+
+      // Set user-friendly error message
+      if (appError.statusCode === 429 || appError.type === 'RATE_LIMIT') {
+        setError('RATE_LIMIT');
+      } else if (appError.statusCode === 404) {
+        setError('We couldn\'t access this website. Make sure it\'s publicly available and the URL is correct.');
+      } else {
+        setError(appError.userMessage || 'An error occurred while analyzing the website. Please try again.');
       }
     } finally {
       setIsAnalyzing(false);

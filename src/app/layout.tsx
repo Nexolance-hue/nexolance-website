@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.scss';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import { ErrorBoundary } from '@/components/errors/ErrorBoundary';
 import { defaultMetadata } from '@/lib/seo-config';
 
 export const metadata: Metadata = defaultMetadata;
@@ -20,9 +21,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body>
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <ErrorBoundary>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </ErrorBoundary>
       </body>
     </html>
   );
