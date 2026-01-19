@@ -31,7 +31,7 @@ export default function RootLayout({
         {/* SEO Audit Software Widget - JavaScript */}
         <Script
           src="https://api.seoaudit.software/files/widget/v3.1/js/api.min.js"
-          strategy="lazyOnload"
+          strategy="afterInteractive"
         />
       </body>
     </html>

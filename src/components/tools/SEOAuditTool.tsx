@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, XCircle, AlertTriangle, TrendingUp, Search, Award, Mail, Phone, FileText, Zap, Target, BarChart3, Users, Quote, Star, Shield, Clock, BookOpen, MapPin, MessageSquare, Download, Share2 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import SEOWidget from './SEOWidget';
 
 interface AuditScores {
   seo: number;
@@ -751,17 +752,7 @@ ${topIssues}
                   {/* SEO Audit Software Widget */}
                   <div className="mb-4">
                     <div className="bg-white rounded-4 p-4 shadow-lg" style={{ maxWidth: '800px', margin: '0 auto' }}>
-                      <div
-                        className="sas-widget"
-                        id="sas-widget-8cbcaf530edba0a1aa7f31878f8043b8"
-                        data-url="https://api.seoaudit.software"
-                        data-key="8cbcaf530edba0a1aa7f31878f8043b8"
-                      ></div>
-                      <script
-                        dangerouslySetInnerHTML={{
-                          __html: `if(typeof SAS_widget != 'undefined'){ new SAS_widget('#sas-widget-8cbcaf530edba0a1aa7f31878f8043b8');}`
-                        }}
-                      />
+                      <SEOWidget />
                     </div>
                   </div>
 
