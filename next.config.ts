@@ -6,6 +6,15 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   trailingSlash: false,
+  async redirects() {
+    return [
+      {
+        source: '/contact-us',
+        destination: '/quote',
+        permanent: true, // 308 permanent redirect
+      },
+    ];
+  },
 };
 
 export default nextConfig;

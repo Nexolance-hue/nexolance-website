@@ -4,11 +4,11 @@ export default function AboutPageSchema() {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
-    '@id': 'https://nexolance.agency/about#webpage',
+    '@id': 'https://nexolance.agency/about-us#webpage',
     name: 'About Nexolance - Kansas Digital Marketing Agency',
     description:
       'Learn about Nexolance, a leading digital marketing agency specializing in local SEO services for Kansas businesses. Our mission is to help local businesses dominate search results and grow revenue.',
-    url: 'https://nexolance.agency/about',
+    url: 'https://nexolance.agency/about-us',
     mainEntity: {
       '@type': 'Organization',
       '@id': 'https://nexolance.agency/#organization',

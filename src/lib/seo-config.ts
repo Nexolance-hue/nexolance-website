@@ -1007,12 +1007,12 @@ export const aboutMetadata: Metadata = {
   description: 'Learn about Nexolance, Kansas City\'s trusted digital marketing partner. Expert team specializing in web design, SEO, and PPC management.',
   keywords: ['about nexolance', 'digital marketing agency', 'Kansas City marketing', 'SEO experts'],
   alternates: {
-    canonical: 'https://nexolance.agency/about',
+    canonical: 'https://nexolance.agency/about-us',
   },
   openGraph: {
     title: 'About Nexolance | Kansas City Digital Marketing Agency',
     description: 'Learn about Nexolance, Kansas City\'s trusted digital marketing partner.',
-    url: 'https://nexolance.agency/about',
+    url: 'https://nexolance.agency/about-us',
     siteName: 'Nexolance',
     locale: 'en_US',
     type: 'website',

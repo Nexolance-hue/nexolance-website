@@ -2196,7 +2196,7 @@ ${topIssues}
                       className="p-4 rounded-3 h-100"
                       style={{ background: '#f9fafb', border: '2px solid #E5E7EB', cursor: 'pointer', transition: 'all 0.3s ease' }}
                       whileHover={{ y: -8, boxShadow: '0 12px 24px rgba(0,0,0,0.1)' }}
-                      onClick={() => window.location.href = '/about'}
+                      onClick={() => window.location.href = '/about-us'}
                     >
                       <BookOpen size={40} className="mb-3" style={{ color: '#10B981' }} />
                       <p className="small fw-semibold mb-2 text-uppercase" style={{ color: '#10B981', letterSpacing: '1px' }}>📚 Blog Post</p>
@@ -2226,7 +2226,7 @@ ${topIssues}
                       className="p-4 rounded-3 h-100"
                       style={{ background: '#f9fafb', border: '2px solid #E5E7EB', cursor: 'pointer', transition: 'all 0.3s ease' }}
                       whileHover={{ y: -8, boxShadow: '0 12px 24px rgba(0,0,0,0.1)' }}
-                      onClick={() => window.location.href = '/about'}
+                      onClick={() => window.location.href = '/about-us'}
                     >
                       <TrendingUp size={40} className="mb-3" style={{ color: '#F59E0B' }} />
                       <p className="small fw-semibold mb-2 text-uppercase" style={{ color: '#F59E0B', letterSpacing: '1px' }}>💼 Case Study</p>

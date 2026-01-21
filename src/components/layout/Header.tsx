@@ -122,7 +122,7 @@ export default function Header() {
               </span>
             </Nav.Link>
 
-            <Nav.Link onClick={() => navigate('/about')}>About</Nav.Link>
+            <Nav.Link onClick={() => navigate('/about-us')}>About</Nav.Link>
 
             <Nav.Link onClick={() => navigate('/quote')} className="d-lg-none">
               Get Quote

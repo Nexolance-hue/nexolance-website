@@ -96,7 +96,7 @@ export default function Footer() {
             <ul className="list-unstyled">
               <li className="mb-2">
                 <Link
-                  href="/about"
+                  href="/about-us"
                   className="text-light opacity-75 text-decoration-none hover-link"
                 >
                   About Us
