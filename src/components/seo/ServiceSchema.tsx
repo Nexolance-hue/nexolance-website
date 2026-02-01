@@ -67,13 +67,6 @@ export default function ServiceSchema({
       availability: 'https://schema.org/InStock',
       validFrom: new Date().toISOString().split('T')[0],
     },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: COMPANY_INFO.aggregateRating.ratingValue,
-      reviewCount: COMPANY_INFO.aggregateRating.reviewCount,
-      bestRating: COMPANY_INFO.aggregateRating.bestRating,
-      worstRating: COMPANY_INFO.aggregateRating.worstRating,
-    },
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
       name: `${service.name} Features`,
