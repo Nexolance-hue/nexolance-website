@@ -41,13 +41,6 @@ export default function LocalBusinessSchema({ city }: LocalBusinessSchemaProps) 
         closes: '17:00',
       },
     ],
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: COMPANY_INFO.aggregateRating.ratingValue,
-      reviewCount: COMPANY_INFO.aggregateRating.reviewCount,
-      bestRating: COMPANY_INFO.aggregateRating.bestRating,
-      worstRating: COMPANY_INFO.aggregateRating.worstRating,
-    },
     priceRange: '$$',
     image: `${COMPANY_INFO.urls.website}/images/nexolance-office.jpg`,
     logo: COMPANY_INFO.urls.logo,
