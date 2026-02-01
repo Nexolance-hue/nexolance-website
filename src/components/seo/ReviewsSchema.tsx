@@ -31,10 +31,14 @@ export default function ReviewsSchema({ testimonials }: ReviewsSchemaProps) {
     review: testimonials.map((testimonial, index) => ({
       '@type': 'Review',
       '@id': `https://nexolance.agency/testimonials#review-${index + 1}`,
+      itemReviewed: {
+        '@type': 'Organization',
+        '@id': 'https://nexolance.agency/#organization',
+        name: 'Nexolance',
+      },
       author: {
         '@type': 'Person',
         name: testimonial.name,
-        jobTitle: testimonial.title || undefined,
       },
       reviewRating: {
         '@type': 'Rating',
@@ -44,10 +48,6 @@ export default function ReviewsSchema({ testimonials }: ReviewsSchemaProps) {
       },
       reviewBody: testimonial.quote,
       datePublished: new Date().toISOString().split('T')[0],
-      publisher: {
-        '@type': 'Organization',
-        name: 'Nexolance',
-      },
     })),
   };
 
