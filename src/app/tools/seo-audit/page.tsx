@@ -21,14 +21,16 @@ export default function SEOAuditPage() {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
-            '@type': 'WebApplication',
+            '@type': 'SoftwareApplication',
             name: 'Free SEO Audit Tool',
             description: 'Free comprehensive SEO audit tool that analyzes your website performance, SEO, accessibility, and best practices in 60 seconds. No credit card required.',
             applicationCategory: 'BusinessApplication',
+            operatingSystem: 'Web Browser',
             offers: {
               '@type': 'Offer',
               price: '0',
               priceCurrency: 'USD',
+              availability: 'https://schema.org/InStock',
             },
             provider: {
               '@type': 'Organization',
@@ -43,7 +45,9 @@ export default function SEOAuditPage() {
             aggregateRating: {
               '@type': 'AggregateRating',
               ratingValue: '4.9',
-              reviewCount: '127'
+              reviewCount: '127',
+              bestRating: '5',
+              worstRating: '1'
             }
           }),
         }}
