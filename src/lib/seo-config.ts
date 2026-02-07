@@ -4,6 +4,16 @@ import { Service } from '@/data/services';
 import { Industry } from '@/data/industries';
 import { industryMetaDescriptions, industryTitleTemplates } from '@/data/industry-meta';
 
+// Helper to generate OG/Twitter image objects from a slug
+function getOgImage(slug: string, alt: string = 'Nexolance') {
+  return {
+    url: `/images/featured/${slug}.webp`,
+    width: 1200,
+    height: 630,
+    alt,
+  };
+}
+
 // Universal meta tags configuration
 export const universalMetaTags = {
   viewport: 'width=device-width, initial-scale=1.0',
@@ -51,14 +61,7 @@ export const defaultMetadata: Metadata = {
     description:
       'Boost your online presence with Nexolance—web design, local SEO, and link building in Kansas City. Proven, results-driven strategies.',
     url: 'https://nexolance.agency/',
-    images: [
-      {
-        url: '/images/og-default.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Nexolance Digital Marketing',
-      },
-    ],
+    images: [getOgImage('home', 'Nexolance Digital Marketing')],
   },
   twitter: {
     card: 'summary_large_image',
@@ -66,7 +69,7 @@ export const defaultMetadata: Metadata = {
     creator: '@nexolance',
     title: 'Nexolance | Kansas City Web Design & Local SEO Experts',
     description: 'Proven digital marketing strategies for Kansas City businesses.',
-    images: ['/images/twitter-default.jpg'],
+    images: ['/images/featured/home.webp'],
   },
   robots: {
     index: true,
@@ -825,14 +828,14 @@ export function generateLocationMetadata({
       siteName: 'Nexolance',
       locale: 'en_US',
       type: 'website',
-      images: [
-        {
-          url: `https://nexolance.agency/images/og-${city.slug}.jpg`,
-          width: 1200,
-          height: 630,
-          alt: `${service?.name || industry?.name || 'Digital Marketing'} in ${city.name}, Kansas`,
-        },
-      ],
+      images: [getOgImage(
+        industry
+          ? `kansas-${city.slug}-local-seo-${industry.slug}`
+          : service
+            ? `kansas-${city.slug}-${service.slug}`
+            : `kansas-${city.slug}`,
+        `${service?.name || industry?.name || 'Digital Marketing'} in ${city.name}, Kansas`,
+      )],
     },
     twitter: {
       card: 'summary_large_image',
@@ -840,7 +843,7 @@ export function generateLocationMetadata({
       description: twitterDescription,
       site: '@nexolance',
       creator: '@nexolance',
-      images: [`https://nexolance.agency/images/twitter-${city.slug}.jpg`],
+      images: [`/images/featured/${industry ? `kansas-${city.slug}-local-seo-${industry.slug}` : service ? `kansas-${city.slug}-${service.slug}` : `kansas-${city.slug}`}.webp`],
     },
     robots: {
       index: true,
@@ -906,14 +909,7 @@ export function generateServiceMetadata(service: Service): Metadata {
       siteName: 'Nexolance',
       locale: 'en_US',
       type: 'website',
-      images: [
-        {
-          url: `https://nexolance.agency/images/og-${service.slug}.jpg`,
-          width: 1200,
-          height: 630,
-          alt: title,
-        },
-      ],
+      images: [getOgImage(`services-${service.slug}`, title)],
     },
     twitter: {
       card: 'summary_large_image',
@@ -921,7 +917,7 @@ export function generateServiceMetadata(service: Service): Metadata {
       description,
       site: '@nexolance',
       creator: '@nexolance',
-      images: [`https://nexolance.agency/images/twitter-${service.slug}.jpg`],
+      images: [`/images/featured/services-${service.slug}.webp`],
     },
     robots: {
       index: true,
@@ -969,14 +965,7 @@ export function generateIndustryMetadata(
       siteName: 'Nexolance',
       locale: 'en_US',
       type: 'website',
-      images: [
-        {
-          url: `https://nexolance.agency/images/og-${city.slug}-${industry.slug}.jpg`,
-          width: 1200,
-          height: 630,
-          alt: `${industry.name} SEO in ${city.name}, Kansas`,
-        },
-      ],
+      images: [getOgImage(`kansas-${city.slug}-local-seo-${industry.slug}`, `${industry.name} SEO in ${city.name}, Kansas`)],
     },
     twitter: {
       card: 'summary_large_image',
@@ -984,7 +973,7 @@ export function generateIndustryMetadata(
       description: `${industry.name} SEO services in ${city.name}, Kansas`,
       site: '@nexolance',
       creator: '@nexolance',
-      images: [`https://nexolance.agency/images/twitter-${city.slug}-${industry.slug}.jpg`],
+      images: [`/images/featured/kansas-${city.slug}-local-seo-${industry.slug}.webp`],
     },
     robots: {
       index: true,
@@ -1016,14 +1005,7 @@ export const aboutMetadata: Metadata = {
     siteName: 'Nexolance',
     locale: 'en_US',
     type: 'website',
-    images: [
-      {
-        url: 'https://nexolance.agency/images/og-about.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'About Nexolance',
-      },
-    ],
+    images: [getOgImage('about-us', 'About Nexolance')],
   },
   twitter: {
     card: 'summary_large_image',
@@ -1031,7 +1013,7 @@ export const aboutMetadata: Metadata = {
     description: 'Expert team specializing in web design, SEO, and PPC management.',
     site: '@nexolance',
     creator: '@nexolance',
-    images: ['https://nexolance.agency/images/twitter-about.jpg'],
+    images: ['/images/featured/about-us.webp'],
   },
 };
 
@@ -1052,14 +1034,7 @@ export const quoteMetadata: Metadata = {
     siteName: 'Nexolance',
     locale: 'en_US',
     type: 'website',
-    images: [
-      {
-        url: 'https://nexolance.agency/images/og-quote.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Get a Free Quote',
-      },
-    ],
+    images: [getOgImage('quote', 'Get a Free Quote')],
   },
   twitter: {
     card: 'summary_large_image',
@@ -1067,7 +1042,7 @@ export const quoteMetadata: Metadata = {
     description: 'Custom digital marketing solutions for Kansas businesses.',
     site: '@nexolance',
     creator: '@nexolance',
-    images: ['https://nexolance.agency/images/twitter-quote.jpg'],
+    images: ['/images/featured/quote.webp'],
   },
 };
 
@@ -1088,14 +1063,7 @@ export const servicesOverviewMetadata: Metadata = {
     siteName: 'Nexolance',
     locale: 'en_US',
     type: 'website',
-    images: [
-      {
-        url: 'https://nexolance.agency/images/og-services.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Digital Marketing Services',
-      },
-    ],
+    images: [getOgImage('services', 'Digital Marketing Services')],
   },
   twitter: {
     card: 'summary_large_image',
@@ -1103,7 +1071,7 @@ export const servicesOverviewMetadata: Metadata = {
     description: 'Web design, local SEO, PPC management, and link building.',
     site: '@nexolance',
     creator: '@nexolance',
-    images: ['https://nexolance.agency/images/twitter-services.jpg'],
+    images: ['/images/featured/services.webp'],
   },
 };
 
@@ -1124,14 +1092,7 @@ export const kansasDirectoryMetadata: Metadata = {
     siteName: 'Nexolance',
     locale: 'en_US',
     type: 'website',
-    images: [
-      {
-        url: 'https://nexolance.agency/images/og-kansas-directory.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Kansas Cities Directory',
-      },
-    ],
+    images: [getOgImage('kansas-directory', 'Kansas Cities Directory')],
   },
   twitter: {
     card: 'summary_large_image',
@@ -1139,7 +1100,7 @@ export const kansasDirectoryMetadata: Metadata = {
     description: 'Find local SEO and digital marketing in your Kansas city.',
     site: '@nexolance',
     creator: '@nexolance',
-    images: ['https://nexolance.agency/images/twitter-kansas-directory.jpg'],
+    images: ['/images/featured/kansas-directory.webp'],
   },
   other: {
     'geo.region': 'US-KS',

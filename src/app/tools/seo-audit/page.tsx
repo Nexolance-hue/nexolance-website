@@ -10,6 +10,13 @@ export const metadata: Metadata = {
     description: 'Analyze your website\'s SEO in 60 seconds. Free, instant results.',
     url: 'https://nexolance.agency/tools/seo-audit',
     type: 'website',
+    images: [{ url: '/images/featured/tools-seo-audit.webp', width: 1200, height: 630, alt: 'Free SEO Audit Tool' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Free SEO Audit Tool | Nexolance',
+    description: 'Analyze your website\'s SEO in 60 seconds. Free, instant results.',
+    images: ['/images/featured/tools-seo-audit.webp'],
   },
 };
 
